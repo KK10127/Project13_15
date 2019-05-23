@@ -19,8 +19,36 @@
  *          Display any record in the file
  *          Change any record in the file
  *
- *
- *
+ * ALGORITHM:
+ *      1. Declare variables
+ *      2. Load up some pre-made database values (Toaster, Lamp, Backpack)
+ *      3. Create the file stream
+ *      4. Create a struct for a record.
+ *      REPEAT THE BELOW / WHILE LOOP
+ *      5. Display the main menu
+ *      6. Call a switch statement on the menu choices:
+ *          choice 1:
+ *              - get information from the user to populate the record members.
+ *              - Move to the correct place in the file and add the record to the end.
+ *              - Increment the number of records.
+ *          choice 2:
+ *              - get the target record number from the user
+ *              - seek to that record using seekg
+ *              - read the record into the created record struct
+ *              - display the struct contents
+ *          choice 3:
+ *              - seek to the begining of the file
+ *              - read the next record in the file into the record struct
+ *              - display the record attributes
+ *              - repeat until eof
+ *          choice 4:
+ *              - get the target record number from the user
+ *              - seek to that record using seekg
+ *              - reead that record using .read()
+ *              - edit the parts by prompting the user to re-enter them
+ *              - move to position of the record using seekp again
+ *              - overwrite the record
+ *       7. close the filestream and return out
  */
 #include <iostream>
 #include <fstream>
@@ -39,7 +67,7 @@ struct Item
 
 int main() {
 
-
+    // declare variables
     string fileName;
     int choice, numRecords, targetRecord;
 
@@ -55,6 +83,7 @@ int main() {
     fstream inventory("database.dat", ios::in | ios::out | ios::binary);
     if (!inventory) { cout << "Error bootstrapping database!" << endl; return 0; }
 
+    // write pre-installed values
     inventory.write(reinterpret_cast<char *>(&loadThis1), sizeof(loadThis1));
     inventory.write(reinterpret_cast<char *>(&loadThis2), sizeof(loadThis2));
     inventory.write(reinterpret_cast<char *>(&loadThis3), sizeof(loadThis3));
@@ -64,9 +93,10 @@ int main() {
     cout << "Connecting to the database..." << endl;
 
     do {
-
+        // create a struct for the record
         struct Item record;
 
+        // display the main menu
         cout << "\n\n\tMAIN MENU Please select an option below:" << endl;
         cout << "\t\t1) Add a new record to the file" << endl;
         cout << "\t\t2) Display a particular record" << endl;
@@ -77,9 +107,10 @@ int main() {
         // user input
         cin >> choice;
 
-        // switch statement
+        // switch statement on choice
         switch (choice) {
             case 1:
+                // get information for the user
                 cout << "\n\nEnter a brief description of the object: ";
                 cin.ignore();
                 cin.getline(record.description, 100);
@@ -104,6 +135,7 @@ int main() {
                 numRecords++;
                 break;
             case 2:
+                // get the target record
                 cout << "\n\nWhich record number would you like to view?:";
                 cin >> targetRecord;
 
@@ -143,6 +175,7 @@ int main() {
                 inventory.clear();
                 break;
             case 4:
+                // get the target record
                 cout << "\n\nWhich record number would you like to edit?:";
                 cin >> targetRecord;
 
@@ -176,6 +209,7 @@ int main() {
 
     cout << "This concludes the demo!" << endl;
 
+    // close the filestream
     inventory.close();
     return 0;
 }
